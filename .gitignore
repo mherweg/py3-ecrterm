@@ -1,3 +1,5 @@
 __pycache__
 *.pyc
 venv
+/.idea/
+/py3_ecrterm.egg-info/

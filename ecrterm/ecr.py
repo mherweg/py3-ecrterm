@@ -16,7 +16,7 @@ from ecrterm.exceptions import (
 from ecrterm.packets.apdu import Packets
 from ecrterm.packets.base_packets import (
     Authorisation, Completion, DisplayText, EndOfDay, Packet, PrintLine,
-    Registration, ResetTerminal, StatusEnquiry, StatusInformation)
+    Registration, ResetTerminal, StatusEnquiry, StatusInformation, AbortCommand)
 from ecrterm.packets.bmp import BCD
 from ecrterm.transmission._transmission import Transmission
 from ecrterm.transmission.signals import ACK, DLE, ETX, NAK, STX, TRANSMIT_OK
@@ -314,6 +314,16 @@ class ECR(object):
             sleep(1)
         return ret
 
+    def cancel_transaction(self):
+        """
+        Cancel transaction during the process
+        """
+        if self.transport.insert_delays:
+            # we actually make a small sleep, allowing better flow.
+            sleep(0.2)
+        transmission = self.transmitter.abort(AbortCommand(), None)
+        return transmission
+
     def show_text(self, lines=None, duration=5, beeps=0):
         """
         displays a text on the PT screen for duration of seconds.
@@ -372,6 +382,8 @@ class ECR(object):
             sleep(0.2)
         transmission = self.transmitter.transmit(packet)
         return transmission
+
+
 
     # dev functions.
     #########################################################################
